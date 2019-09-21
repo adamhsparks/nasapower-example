@@ -127,30 +127,37 @@ file of the rainfall.
 power <- vector(mode = "list", 4) # hold four growing seasons
 precip <- vector(mode = "list", nrow(coords)) # hold the cells
 
-seasons <- list(c("2014-11-01", "2015-01-31"),
-                c("2015-11-01", "2016-01-31"),
-                c("2016-11-01", "2017-01-31"),
-                c("2017-11-01", "2018-01-31"))
+seasons <- list(
+  c("2014-11-01", "2015-01-31"),
+  c("2015-11-01", "2016-01-31"),
+  c("2016-11-01", "2017-01-31"),
+  c("2017-11-01", "2018-01-31")
+)
 
-for (i in seq_along(seasons)) { # four seasons (outer loop 4x)
+for (i in seq_along(seasons)) {
+  # four seasons (outer loop 4x)
   season <- seasons[[i]]
   
-  for (j in seq_along(nrow(coords))) { # 312 coordinate pairs (inner loop 312x)
+  for (j in seq_along(1:nrow(coords))) {
+    # 312 coordinate pairs (inner loop 312x)
     site <- as.numeric(coords[j, ])
-    power_precip <- get_power(community = "AG",
-                              lonlat = site,
-                              pars = "PRECTOT",
-                              dates = season,
-                              temporal_average = "DAILY"
+    power_precip <- get_power(
+      community = "AG",
+      lonlat = site,
+      pars = "PRECTOT",
+      dates = season,
+      temporal_average = "DAILY"
     )
     precip[[j]] <- power_precip
     Sys.sleep(5) # wait 5 seconds between requests so we don't hammer the server
   }
   precip <- bind_rows(power_precip)
-  power[[i]] <- precip
+  power[i] <- precip
 }
 
 power <- bind_rows(power)
+
+write.csv(power, "power_data.csv", row.names = FALSE)
 ```
 
 ## Acknowledgements
