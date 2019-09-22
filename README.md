@@ -152,7 +152,7 @@ for (i in seq_along(seasons)) {
     Sys.sleep(5) # wait 5 seconds between requests so we don't hammer the server
   }
   precip <- bind_rows(power_precip)
-  power[i] <- precip
+  power[[i]] <- precip
 }
 
 power <- bind_rows(power)
